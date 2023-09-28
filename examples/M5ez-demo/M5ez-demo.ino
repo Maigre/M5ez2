@@ -9,6 +9,11 @@
 void setup() {
   #include <themes/default.h>
   #include <themes/dark.h>
+  #include <themes/monoAmber.h>
+  #include <themes/monoDark.h>
+  #include <themes/monoDay.h>
+  #include <themes/monoDayBtn.h>
+  #include <themes/monoNight.h>
   ezt::setDebug(INFO);
   ez.begin();
 }
@@ -260,12 +265,20 @@ uint32_t period;
 uint32_t secondsCounter = 0;
 
 uint32_t eventLoop() {
-    //get some updated data 
+    //get some updated data
+    
     //for example period between loop reentries in us
     timeOnEntry = esp_timer_get_time();
     period = timeOnEntry - timeOnEntryOld;
     timeOnEntryOld = timeOnEntry;
     secondsCounter++;
+    
+    //wake up screen on some event
+    if(secondsCounter >= 100){
+      secondsCounter = 0;
+      ez.backlight.wakeup();
+    }
+    
     //show updated data in an item of the active menue 
     ezMenu* curMenu = M5ez::getCurrentMenu();
     if (curMenu->getTitle() == "Control") {
