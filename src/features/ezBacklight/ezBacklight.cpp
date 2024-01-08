@@ -203,8 +203,8 @@ uint32_t ezBacklight::loop() {
 			_backlight_off = true;	//set it here to turn LDO off on brightness==0
 			setBtnBrightness(0);
 			setLcdBrightness(0);
-			m5.Lcd.writecommand(TFT_DISPOFF);
-			m5.Lcd.writecommand(TFT_SLPIN);
+			M5.Lcd.writecommand(TFT_DISPOFF);
+			M5.Lcd.writecommand(TFT_SLPIN);
 			ez.yield();
 		}
 	}
@@ -237,30 +237,30 @@ bool ezBacklight::getBacklightOff(){
 
 
 #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) || defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32) //TTGO T4 v1.3, K46, K46v2
-	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { m5.Lcd.setBrightness((uint8_t)(lcdBrightness * 2.55)); }
+	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { M5.Lcd.setBrightness((uint8_t)(lcdBrightness * 2.55)); }
 #elif defined (ARDUINO_M5Stick_C)
 	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) {
 		uint8_t brightness = (lcdBrightness * 10) / 13;
-		m5.Axp.ScreenBreath(brightness + 7);
+		M5.Axp.ScreenBreath(brightness + 7);
 		if(brightness == 0){
 			if(_backlight_off) {
-				m5.Axp.SetLDO2(false);	//turn LCD_BL LDO completely off to save battery
+				M5.Axp.SetLDO2(false);	//turn LCD_BL LDO completely off to save battery
 				return;
 			}
 		} else if(_backlight_off) {
-			m5.Axp.SetLDO2(true);	//turn LCD_BL LDO on
+			M5.Axp.SetLDO2(true);	//turn LCD_BL LDO on
 		}
 	}
 #elif defined (ARDUINO_M5STACK_Core2)
-	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { m5.Axp.SetLcdVoltage(lcdBrightness * 80 + 2500); }
+	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { M5.Axp.SetLcdVoltage(lcdBrightness * 80 + 2500); }
 #elif defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)	//M35, K36 under M5StX only
-	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { m5.Ioe.setLcdBrightness(lcdBrightness, LOW); }
+	void ezBacklight::setLcdBrightness(uint8_t lcdBrightness) { M5.Ioe.setLcdBrightness(lcdBrightness, LOW); }
 #endif
 
 
 #if defined (_M5STX_CORE_)
 	#if defined (ARDUINO_ESP32_DEV) || defined (ARDUINO_D1_MINI32)	//M35, K36 under M5StX only
-		void ezBacklight::setBtnBrightness(uint8_t btnBrightness) { m5.Ioe.setBtnBrightness(btnBrightness, HIGH); }
+		void ezBacklight::setBtnBrightness(uint8_t btnBrightness) { M5.Ioe.setBtnBrightness(btnBrightness, HIGH); }
 	#elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)	//K46 || K46v2
 		void ezBacklight::setBtnBrightness(uint8_t btnBrightness) { 
 			ledcWrite(BTN_PWM_CHANNEL, btnBrightness * 2.55); // brightness 0-255
@@ -274,8 +274,8 @@ bool ezBacklight::getBacklightOff(){
 
 void ezBacklight::wakeup() {
 	if(_backlight_off){
-		m5.Lcd.writecommand(TFT_DISPON);
-		m5.Lcd.writecommand(TFT_SLPOUT);
+		M5.Lcd.writecommand(TFT_DISPON);
+		M5.Lcd.writecommand(TFT_SLPOUT);
 		setBtnBrightness(_btn_brightness);
 		setLcdBrightness(_lcd_brightness);
 		_backlight_off = false;

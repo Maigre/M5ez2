@@ -1,37 +1,46 @@
 #include <M5ez.h>
+// #include "assets/images.h"
+#include "class/sysinfo.h"
 
-#include <ezTime.h>
+void mainmenu_menus();
+bool mainmenu_settings();
+void submenu_more();
+void mainmenu_image();
+void mainmenu_msgs();
+void mainmenu_buttons();
+void mainmenu_entry();
+void mainmenu_ota();
+void powerOff();
+void aboutM5ez();
+void printButton();
 
-#include "images.h"
-
-#define MAIN_DECLARED
-
-void setup() {
-  #include <themes/default.h>
-  #include <themes/dark.h>
-  #include <themes/monoAmber.h>
-  #include <themes/monoDark.h>
-  #include <themes/monoDay.h>
-  #include <themes/monoDayBtn.h>
-  #include <themes/monoNight.h>
-  ezt::setDebug(INFO);
-  ez.begin();
+void menu_init() {
+    #include <themes/default.h>
+    #include <themes/dark.h>
+    #include <themes/monoAmber.h>
+    #include <themes/monoDark.h>
+    #include <themes/monoDay.h>
+    #include <themes/monoDayBtn.h>
+    #include <themes/monoNight.h>
+    ezt::setDebug(INFO);
+    ez.begin();
 }
 
-void loop() {
-  ezMenu mainmenu("Welcome to M5ez");
-  mainmenu.txtSmall();
-  mainmenu.addItem("Flexible text menus", mainmenu_menus);
-  mainmenu.addItem("Event updated menus", NULL, mainmenu_settings);
-  mainmenu.addItem("Image menus", mainmenu_image);
-  mainmenu.addItem("Neat messages", mainmenu_msgs);
-  mainmenu.addItem("Multi-function buttons", mainmenu_buttons);
-  mainmenu.addItem("3-button text entry", mainmenu_entry);
-  mainmenu.addItem("Built-in wifi & other settings", ez.settings.menu);
-  mainmenu.addItem("Updates via https", mainmenu_ota);
-  mainmenu.upOnFirst("last|up");
-  mainmenu.downOnLast("first|down");
-  mainmenu.run();
+void menu_loop() 
+{
+    ezMenu mainmenu("Welcome to M5ez");
+    mainmenu.txtSmall();
+    mainmenu.addItem("Flexible text menus", mainmenu_menus);
+    // mainmenu.addItem("Event updated menus", mainmenu_settings);
+    // mainmenu.addItem("Image menus", mainmenu_image);
+    mainmenu.addItem("Neat messages", mainmenu_msgs);
+    mainmenu.addItem("Multi-function buttons", mainmenu_buttons);
+    mainmenu.addItem("3-button text entry", mainmenu_entry);
+    mainmenu.addItem("Built-in wifi & other settings", ez.settings.menu);
+    mainmenu.addItem("Updates via https", mainmenu_ota);
+    mainmenu.upOnFirst("last|up");
+    mainmenu.downOnLast("first|down");
+    mainmenu.run();
 }
 
 void mainmenu_menus() { 
@@ -355,18 +364,18 @@ void submenu_more() {
   }
 }
 
-void mainmenu_image() {
-  ezMenu images;
-  images.imgBackground(TFT_BLACK);
-  images.imgFromTop(40);
-  images.imgCaptionColor(TFT_WHITE);
-  images.addItem(sysinfo_jpg, "System Information", sysInfo);
-  images.addItem(wifi_jpg, "WiFi Settings", ez.wifi.menu);
-  images.addItem(about_jpg, "About M5ez", aboutM5ez);
-  images.addItem(sleep_jpg, "Power Off", powerOff);
-  images.addItem(return_jpg, "Back");
-  images.run();
-}
+// void mainmenu_image() {
+//   ezMenu images;
+//   images.imgBackground(TFT_BLACK);
+//   images.imgFromTop(40);
+//   images.imgCaptionColor(TFT_WHITE);
+//   images.addItem(sysinfo_jpg, "System Information", sysInfo);
+//   images.addItem(wifi_jpg, "WiFi Settings", ez.wifi.menu);
+//   images.addItem(about_jpg, "About M5ez", aboutM5ez);
+//   images.addItem(sleep_jpg, "Power Off", powerOff);
+//   images.addItem(return_jpg, "Back");
+//   images.run();
+// }
     
 void mainmenu_msgs() {
   String cr = (String)char(13);
@@ -431,20 +440,20 @@ void mainmenu_entry() {
 }
 
 void mainmenu_ota() {
-  if (ez.msgBox("Get OTA_https demo", "This will replace the demo with a program that can then load the demo program again.", "Cancel#OK#") == "OK") {
-    ezProgressBar progress_bar("OTA update in progress", "Downloading ...", "Abort");
-    #include "raw_githubusercontent_com.h" // the root certificate is now in const char * root_cert
-    if (ez.wifi.update("https://raw.githubusercontent.com/ropg/M5ez/master/compiled_binaries/OTA_https.bin", root_cert, &progress_bar)) {
-      ez.msgBox("Over The Air updater", "OTA download successful. Reboot to new firmware", "Reboot");
-      ESP.restart();
-    } else {
-      ez.msgBox("OTA error", ez.wifi.updateError(), "OK");
-    }
-  }
+//   if (ez.msgBox("Get OTA_https demo", "This will replace the demo with a program that can then load the demo program again.", "Cancel#OK#") == "OK") {
+//     ezProgressBar progress_bar("OTA update in progress", "Downloading ...", "Abort");
+//     #include "raw_githubusercontent_com.h" // the root certificate is now in const char * root_cert
+//     if (ez.wifi.update("https://raw.githubusercontent.com/ropg/M5ez/master/compiled_binaries/OTA_https.bin", root_cert, &progress_bar)) {
+//       ez.msgBox("Over The Air updater", "OTA download successful. Reboot to new firmware", "Reboot");
+//       ESP.restart();
+//     } else {
+//       ez.msgBox("OTA error", ez.wifi.updateError(), "OK");
+//     }
+//   }
 }
 
-void powerOff() { M5.powerOFF(); }
+void powerOff() { M5.Power.powerOff(); }
 
 void aboutM5ez() {
-  ez.msgBox("About M5ez", "M5ez was written by | Rop Gonggrijp | | https://github.com/ropg/M5ez");
+  ez.msgBox("About M5ez2", "M5ez was written by | Rop Gonggrijp | |Modified by | Thomas BOHL ");
 }

@@ -103,25 +103,26 @@ void ezBattery::_drawWidget(uint16_t x, uint16_t w) {
 	uint16_t left_offset = x + ez.theme->header_hmargin;
 	uint8_t top = ez.theme->header_height / 10;
 	uint8_t height = ez.theme->header_height * 0.8;
-	m5.lcd.fillRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, ez.theme->header_bgcolor);
+	M5.Lcd.fillRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, ez.theme->header_bgcolor);
 	if (_isCharging()) {
-		m5.lcd.drawRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, TFT_RED);
+		M5.Lcd.drawRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, TFT_RED);
 	} else {
-		m5.lcd.drawRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, ez.theme->header_fgcolor);
+		M5.Lcd.drawRoundRect(left_offset, top, ez.theme->battery_bar_width, height, ez.theme->battery_bar_gap, ez.theme->header_fgcolor);
 	}
 	uint8_t bar_width = (ez.theme->battery_bar_width - ez.theme->battery_bar_gap * 9) / 8.0;
 	uint8_t bar_height = height - ez.theme->battery_bar_gap * 2;
 	left_offset += ez.theme->battery_bar_gap;
 	for (uint8_t n = 0; n < (_numChargingBars != BATTERY_CHARGING_OFF ? _numChargingBars : currentBatteryLevel); n++) {
-		m5.lcd.fillRect(left_offset + n * (bar_width + ez.theme->battery_bar_gap), top + ez.theme->battery_bar_gap, 
+		M5.Lcd.fillRect(left_offset + n * (bar_width + ez.theme->battery_bar_gap), top + ez.theme->battery_bar_gap, 
 			bar_width, bar_height, _getBatteryBarColor(currentBatteryLevel));
 	}
 }
 
 bool ezBattery::_isChargeControl() {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		//Serial.print("Can control "); Serial.println(m5.Power.canControl(), DEC);
-		return m5.Power.canControl();
+		//Serial.print("Can control "); Serial.println(M5.Power.canControl(), DEC);
+		// return M5.Power.canControl();
+		return true;
 	#elif defined (ARDUINO_M5STACK_Core2)
 		return false;	// charging is automatic
 	#elif defined (ARDUINO_M5Stick_C_Plus)
@@ -154,7 +155,7 @@ void ezBattery::_adaptChargeMode() {
 
 void ezBattery::_setCharge(bool enable) {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		m5.Power.setCharge(enable);
+		M5.Power.setBatteryCharge(enable);
 	#elif defined (ARDUINO_M5STACK_Core2)
 		;	// can be done using bit 7 of REG 0x33
 	#elif defined (ARDUINO_M5Stick_C_Plus)
@@ -172,7 +173,7 @@ void ezBattery::_setCharge(bool enable) {
 
 void ezBattery::_setLowPowerShutdownTime() {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		m5.Power.setLowPowerShutdownTime(M5.Power.ShutdownTime::SHUTDOWN_64S);
+		// M5.Power.setLowPowerShutdownTime(M5.Power.ShutdownTime::SHUTDOWN_64S);
 	#elif defined (ARDUINO_M5STACK_Core2)
 		;	//placeholder for your device method
 	#elif defined (ARDUINO_M5Stick_C_Plus)
@@ -190,9 +191,9 @@ void ezBattery::_setLowPowerShutdownTime() {
 
 uint8_t ezBattery::_getBatteryLevel() {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		return m5.Power.getBatteryLevel();
+		return M5.Power.getBatteryLevel();
 	#elif defined (ARDUINO_M5STACK_Core2) || defined (ARDUINO_M5Stick_C_Plus) || defined (ARDUINO_M5Stick_C)
-		float vBat = m5.Axp.GetBatVoltage();
+		float vBat = M5.Axp.GetBatVoltage();
 		if(vBat >= 4.17f ) return 100;
 		if(vBat >= 4.1f )  return 90;
 		if(vBat >= 4.0f )  return 80;
@@ -205,7 +206,7 @@ uint8_t ezBattery::_getBatteryLevel() {
 	#elif defined (ARDUINO_ESP32_DEV)
 		return 50;	//placeholder for your device method
 	#elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)	//K46 || K46v2
-		return m5.Bat.getBatteryLevel();
+		return M5.Bat.getBatteryLevel();
 	#else
 		return 50;	//placeholder for your device method
 	#endif
@@ -213,17 +214,17 @@ uint8_t ezBattery::_getBatteryLevel() {
 
 bool ezBattery::_isChargeFull() {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		return m5.Power.isChargeFull();
+		return M5.Power.getBatteryLevel() == 100;
 	#elif defined (ARDUINO_M5STACK_Core2)
-		return (m5.Axp.GetBatVoltage() >= 4.17f ? true : false);
+		return (M5.Axp.GetBatVoltage() >= 4.17f ? true : false);
 	#elif defined (ARDUINO_M5Stick_C_Plus)
-		return (m5.Axp.GetBatVoltage() >= 4.17f ? true : false);
+		return (M5.Axp.GetBatVoltage() >= 4.17f ? true : false);
 	#elif defined (ARDUINO_M5Stick_C)
-		return (m5.Axp.GetBatVoltage() >= 4.17f ? true : false);
+		return (M5.Axp.GetBatVoltage() >= 4.17f ? true : false);
 	#elif defined (ARDUINO_ESP32_DEV)
 		return false;	//placeholder for your device method
 	#elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)	//K46 || K46v2
-		return m5.Bat.isChargeFull();
+		return M5.Bat.isChargeFull();
 	#else
 		return false;	//placeholder for your device method
 	#endif		
@@ -231,12 +232,12 @@ bool ezBattery::_isChargeFull() {
 
 bool ezBattery::_isCharging() {
 	#if defined (ARDUINO_M5Stack_Core_ESP32)
-		return m5.Power.isCharging();
+		return M5.Power.isCharging();
 	#elif defined (ARDUINO_M5STACK_Core2)
-		return m5.Axp.isCharging();
+		return M5.Axp.isCharging();
 	#elif defined (ARDUINO_M5Stick_C_Plus) || defined (ARDUINO_M5Stick_C)
 		// No builtin method - can be done this way?
-		// uint32_t coulombNow = m5.Axp.GetCoulombchargeData();
+		// uint32_t coulombNow = M5.Axp.GetCoulombchargeData();
 		// if(coulombNow > _batPrevCoulomb){
 		// 	_batPrevCoulomb = coulombNow;
 		// 	return true;
@@ -244,7 +245,7 @@ bool ezBattery::_isCharging() {
 	#elif defined (ARDUINO_ESP32_DEV)
 		return false;	//placeholder for your device method
 	#elif defined (ARDUINO_FROG_ESP32) || defined (ARDUINO_WESP32)	//K46 || K46v2
-		return m5.Bat.isCharging();
+		return M5.Bat.isCharging();
 	#else
 		return false;
 	#endif

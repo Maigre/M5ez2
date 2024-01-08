@@ -111,7 +111,7 @@ void ezScreen::clear(uint16_t color) {
 	ez.header.clear(false);
 	ez.buttons.clear(false);
 	ez.canvas.reset();
-	m5.lcd.fillRect(0, 0, TFT_W, TFT_H, color);
+	M5.Lcd.fillRect(0, 0, TFT_W, TFT_H, color);
 }
 
 
@@ -192,7 +192,7 @@ uint8_t ezHeader::position(String name) {
 void ezHeader::show(String t /* = "" */) {
 	_shown = true;
 	if (t != "") _title = t;											// only change title if provided
-	m5.lcd.fillRect(0, 0, TFT_W, ez.theme->header_height, ez.theme->header_bgcolor);	// Clear header area
+	M5.Lcd.fillRect(0, 0, TFT_W, ez.theme->header_height, ez.theme->header_bgcolor);	// Clear header area
 	for (uint8_t n = 0; n < _widgets.size(); n++) {
 		(_widgets[n].function)(_widgets[n].x, _widgets[n].w);		// Tell all header widgets to draw
 	}
@@ -209,7 +209,7 @@ void ezHeader::draw(String name) {
 }
 
 void ezHeader::clear(bool wipe /* = true */) {
-	if (wipe) m5.lcd.fillRect(0, 0, TFT_W, ez.theme->header_height, ez.theme->background);
+	if (wipe) M5.Lcd.fillRect(0, 0, TFT_W, ez.theme->header_height, ez.theme->background);
 	_shown = false;
 	ez.canvas.top(0);
 }
@@ -226,11 +226,11 @@ void ezHeader::title(String t) {
 }
 
 void ezHeader::_drawTitle(uint16_t x, uint16_t w) {
-	m5.lcd.fillRect(x, 0, w, ez.theme->header_height, ez.theme->header_bgcolor);
-	m5.lcd.setTextDatum(TL_DATUM);
-	m5.lcd.setTextColor(ez.theme->header_fgcolor);
+	M5.Lcd.fillRect(x, 0, w, ez.theme->header_height, ez.theme->header_bgcolor);
+	M5.Lcd.setTextDatum(TL_DATUM);
+	M5.Lcd.setTextColor(ez.theme->header_fgcolor);
 	ez.setFont(ez.theme->header_font);
-	m5.lcd.drawString(ez.clipString(_title, w - ez.theme->header_hmargin), x + ez.theme->header_hmargin, ez.theme->header_tmargin);
+	M5.Lcd.drawString(ez.clipString(_title, w - ez.theme->header_hmargin), x + ez.theme->header_hmargin, ez.theme->header_tmargin);
 }
 
 
@@ -269,7 +269,7 @@ void ezCanvas::reset() {
 }
 
 void ezCanvas::clear() {
-	m5.lcd.fillRect(left(), top(), width(), height(), ez.screen.background());
+	M5.Lcd.fillRect(left(), top(), width(), height(), ez.screen.background());
 	_x = _lmargin;
 	_y = 0;
 	_printed.clear();
@@ -363,13 +363,13 @@ uint32_t ezCanvas::loop() {
 		for (uint16_t n = 0; n < _printed.size(); n++) {
 			_printed[n].y -= scroll_by;
 		}
-		m5.lcd.fillRect(left(), top(), width(), height(), ez.screen.background());
-		// m5.lcd.fillRect(0, 0, 320, 240, ez.screen.background());
+		M5.Lcd.fillRect(left(), top(), width(), height(), ez.screen.background());
+		// M5.Lcd.fillRect(0, 0, 320, 240, ez.screen.background());
 		for (uint16_t n = 0; n < _printed.size(); n++) {
 			if (_printed[n].y >= _top) {
 				if (_printed[n].font != _font) ez.setFont(_printed[n].font);
-				if (_printed[n].color != _color) m5.lcd.setTextColor(_printed[n].color);
-				m5.lcd.drawString(_printed[n].text, _printed[n].x, _printed[n].y);
+				if (_printed[n].color != _color) M5.Lcd.setTextColor(_printed[n].color);
+				M5.Lcd.drawString(_printed[n].text, _printed[n].x, _printed[n].y);
 			}
 		}
 		_y -= scroll_by;
@@ -390,8 +390,8 @@ uint32_t ezCanvas::loop() {
 
 void ezCanvas::_print(String text) {
 	ez.setFont(_font);
-	m5.lcd.setTextDatum(TL_DATUM);
-	m5.lcd.setTextColor(_color, ez.theme->background);
+	M5.Lcd.setTextDatum(TL_DATUM);
+	M5.Lcd.setTextColor(_color, ez.theme->background);
 	uint8_t h = ez.fontHeight();
 	if (_y + h > _bottom) {
 		if (!_scroll) return;
@@ -403,11 +403,11 @@ void ezCanvas::_print(String text) {
 		remainder = text.substring(crlf + 2);
 		text = text.substring(0,crlf);
 	}
-	if (_x + m5.lcd.textWidth(text) <= _right) {
+	if (_x + M5.Lcd.textWidth(text) <= _right) {
 		if (text != "") _putString(text);
 	} else {
 		for (uint16_t n = 0; n < text.length(); n++) {
-			if (_x + m5.lcd.textWidth(text.substring(0, n + 1)) > _right) {
+			if (_x + M5.Lcd.textWidth(text.substring(0, n + 1)) > _right) {
 				if (n) {
 					_putString(text.substring(0, n));
 				}
@@ -440,9 +440,9 @@ void ezCanvas::_putString(String text) {
 		_printed.push_back(p);
 	}
 	if (_y + h > _bottom) {
-		_x += m5.lcd.textWidth(text);
+		_x += M5.Lcd.textWidth(text);
 	} else{
-		_x += m5.lcd.drawString(text, _x, _y);
+		_x += M5.Lcd.drawString(text, _x, _y);
 	}
 }
 
@@ -488,7 +488,7 @@ void ezButtons::show(String buttons) {
 
 void ezButtons::clear(bool wipe /* = true */) {
 	if (wipe && (_lower_button_row  || _upper_button_row)) {
-		m5.lcd.fillRect(0, ez.canvas.bottom() + 1, TFT_H - ez.canvas.bottom() - 1, TFT_W, ez.screen.background());
+		M5.Lcd.fillRect(0, ez.canvas.bottom() + 1, TFT_H - ez.canvas.bottom() - 1, TFT_W, ez.screen.background());
 	}
 	_btn_a_s = _btn_a_l = _btn_b_s = _btn_b_l = _btn_c_s = _btn_c_l = "";
 	_btn_ab = _btn_bc = _btn_ac = "";
@@ -504,7 +504,7 @@ void ezButtons::_drawButtons(String btn_a_s, String btn_a_l, String btn_b_s, Str
 	if (btn_a_s != "" || btn_a_l != "" || btn_b_s != "" || btn_b_l != "" || btn_c_s != "" || btn_c_l != "") {
 		if (!_lower_button_row) {
 			// If the lower button row wasn't there before, clear the area first
-			m5.lcd.fillRect(0, TFT_H - ez.theme->button_height - ez.theme->button_gap, TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
+			M5.Lcd.fillRect(0, TFT_H - ez.theme->button_height - ez.theme->button_gap, TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
 		}
 		// Then draw the three buttons there. (drawButton erases single buttons if unused.)
 		if (_btn_a_s != btn_a_s || _btn_a_l != btn_a_l) {
@@ -526,7 +526,7 @@ void ezButtons::_drawButtons(String btn_a_s, String btn_a_l, String btn_b_s, Str
 	} else {
 		if (_lower_button_row) {
 			// If there was a lower button row before and it's now gone, clear the area
-			m5.lcd.fillRect(0, TFT_H - ez.theme->button_height - ez.theme->button_gap, TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
+			M5.Lcd.fillRect(0, TFT_H - ez.theme->button_height - ez.theme->button_gap, TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
 			_btn_a_s = _btn_a_l = _btn_b_s = _btn_b_l = _btn_c_s = _btn_c_l = "";
 			_lower_button_row = false;
 		}
@@ -535,7 +535,7 @@ void ezButtons::_drawButtons(String btn_a_s, String btn_a_l, String btn_b_s, Str
 	if (btn_ab != "" || btn_bc != "" || btn_ac != "") {
 		if (!_upper_button_row) {
 			// If the upper button row wasn't there before, clear the area first
-			m5.lcd.fillRect(0, TFT_H - 2 * (ez.theme->button_height + ez.theme->button_gap), TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
+			M5.Lcd.fillRect(0, TFT_H - 2 * (ez.theme->button_height + ez.theme->button_gap), TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
 		}
 		// Then draw the buttons
 		if (_btn_ab != btn_ab) {
@@ -550,8 +550,8 @@ void ezButtons::_drawButtons(String btn_a_s, String btn_a_l, String btn_b_s, Str
 			// Two halves of the same button
 
 			// ugly in code, prettier on the screen: making the buttons square on the screen edges to signal wrap-around
-			m5.lcd.fillRect(0, TFT_H - 2 * ez.theme->button_height - ez.theme->button_gap, btnwidth / 4, ez.theme->button_height, ez.theme->button_bgcolor_t);
-			m5.lcd.fillRect(TFT_W - (btnwidth / 4), TFT_H - 2 * ez.theme->button_height - ez.theme->button_gap, btnwidth / 4, ez.theme->button_height, ez.theme->button_bgcolor_t);
+			M5.Lcd.fillRect(0, TFT_H - 2 * ez.theme->button_height - ez.theme->button_gap, btnwidth / 4, ez.theme->button_height, ez.theme->button_bgcolor_t);
+			M5.Lcd.fillRect(TFT_W - (btnwidth / 4), TFT_H - 2 * ez.theme->button_height - ez.theme->button_gap, btnwidth / 4, ez.theme->button_height, ez.theme->button_bgcolor_t);
 
 			_drawButton(2, ez.rightOf(btn_ac, "|", true), "", (3 * ez.theme->button_gap) + (2 * btnwidth) + (btnwidth / 2), (btnwidth / 2));
 			_drawButton(2, ez.rightOf(btn_ac, "|", true), "", 0, (btnwidth / 2));
@@ -562,7 +562,7 @@ void ezButtons::_drawButtons(String btn_a_s, String btn_a_l, String btn_b_s, Str
 	} else {
 		if (_upper_button_row) {
 			// If there was an upper button row before and it's now gone, clear the area
-			m5.lcd.fillRect(0, TFT_H - 2 * (ez.theme->button_height + ez.theme->button_gap), TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
+			M5.Lcd.fillRect(0, TFT_H - 2 * (ez.theme->button_height + ez.theme->button_gap), TFT_W, ez.theme->button_height + ez.theme->button_gap, ez.screen.background());
 			_btn_ab = _btn_bc = _btn_ac = "";
 			_upper_button_row = false;
 		}
@@ -584,7 +584,7 @@ void ezButtons::_drawButton(int16_t row, String text_s, String text_l, int16_t x
 	}
 	if (text_s != "" || text_l != "") {
 		ez.setFont(ez.theme->button_font);
-		m5.lcd.fillRoundRect(x, y, w, ez.theme->button_height, ez.theme->button_radius, bg_color);
+		M5.Lcd.fillRoundRect(x, y, w, ez.theme->button_height, ez.theme->button_radius, bg_color);
 		if (text_l != "") {
 			_drawButtonString(text_s, x + ez.theme->button_hmargin, y + ez.theme->button_tmargin, ez.theme->button_fgcolor, TL_DATUM);
 		} else {
@@ -592,7 +592,7 @@ void ezButtons::_drawButton(int16_t row, String text_s, String text_l, int16_t x
 		}
 		_drawButtonString(text_l, x + w - ez.theme->button_hmargin, y + ez.theme->button_tmargin, ez.theme->button_longcolor, TR_DATUM);
 	} else {
-		m5.lcd.fillRect(x, y, w, ez.theme->button_height, ez.screen.background());
+		M5.Lcd.fillRect(x, y, w, ez.theme->button_height, ez.screen.background());
 	}
 }
 
@@ -600,18 +600,18 @@ void ezButtons::_drawButtonString(String text, int16_t x, int16_t y, uint16_t co
 	if (text == "~") return;
 	if (text == "up" || text == "down" || text == "left" || text == "right") {
 		y+=2;
-		int16_t w = m5.lcd.textWidth("A") * 1.2;
+		int16_t w = M5.Lcd.textWidth("A") * 1.2;
 		int16_t h = ez.fontHeight() * 0.6;
 		if (datum == TR_DATUM) x = x - w;
 		if (datum == TC_DATUM) x = x - w/2;
-		if (text == "up") m5.lcd.fillTriangle(x, y + h, x + w, y + h, x + w/2 ,y , color);
-		if (text == "down") m5.lcd.fillTriangle(x, y, x + w, y, x + w/2 ,y + h, color);
-		if (text == "right") m5.lcd.fillTriangle(x, y, x, y + h, x + w, y + h/2, color);
-		if (text == "left") m5.lcd.fillTriangle(x + w, y, x + w, y + h, x, y + h/2, color);
+		if (text == "up") M5.Lcd.fillTriangle(x, y + h, x + w, y + h, x + w/2 ,y , color);
+		if (text == "down") M5.Lcd.fillTriangle(x, y, x + w, y, x + w/2 ,y + h, color);
+		if (text == "right") M5.Lcd.fillTriangle(x, y, x, y + h, x + w, y + h/2, color);
+		if (text == "left") M5.Lcd.fillTriangle(x + w, y, x + w, y + h, x, y + h/2, color);
 	} else {
-		m5.lcd.setTextColor(color);
-		m5.lcd.setTextDatum(datum);
-		m5.lcd.drawString(text, x, y);
+		M5.Lcd.setTextColor(color);
+		M5.Lcd.setTextDatum(datum);
+		M5.Lcd.drawString(text, x, y);
 	}
 }
 
@@ -625,52 +625,52 @@ String ezButtons::poll() {
 	ez.yield();
 
 	if (ez.backlight.getBacklightOff()) {
-		if (m5.BtnA.wasPressed() || m5.BtnB.wasPressed() || m5.BtnC.wasPressed()){
+		if (M5.BtnA.wasPressed() || M5.BtnB.wasPressed() || M5.BtnC.wasPressed()){
 			ez.backlight.wakeup();
 			_key_release_wait = true;
 		}
 	}
 	
 	if (!_key_release_wait) {
-		if (_btn_ab != "" && m5.BtnA.isPressed() && m5.BtnB.isPressed() ) {
+		if (_btn_ab != "" && M5.BtnA.isPressed() && M5.BtnB.isPressed() ) {
 			keystr = ez.leftOf(_btn_ab, "|", true);
 			_key_release_wait = true;
 		}
-		if (_btn_bc != "" && m5.BtnB.isPressed() && m5.BtnC.isPressed() ) {
+		if (_btn_bc != "" && M5.BtnB.isPressed() && M5.BtnC.isPressed() ) {
 			keystr = ez.leftOf(_btn_bc, "|", true);
 			_key_release_wait = true;
 		}
-		if (_btn_ac != "" && m5.BtnA.isPressed() && m5.BtnC.isPressed() ) {
+		if (_btn_ac != "" && M5.BtnA.isPressed() && M5.BtnC.isPressed() ) {
 			keystr = ez.leftOf(_btn_ac, "|", true);
 			_key_release_wait = true;
 		}
 
-		if (_btn_a_l != "" && m5.BtnA.pressedFor(ez.theme->longpress_time) ) {
+		if (_btn_a_l != "" && M5.BtnA.pressedFor(ez.theme->longpress_time) ) {
 			keystr = ez.leftOf(_btn_a_l, "|", true);
 			_key_release_wait = true;
 		}
-		if (_btn_a_s != "" && m5.BtnA.wasReleased() ) {
+		if (_btn_a_s != "" && M5.BtnA.wasReleased() ) {
 			keystr = ez.leftOf(_btn_a_s, "|", true);
 		}
 
-		if (_btn_b_l != "" && m5.BtnB.pressedFor(ez.theme->longpress_time) ) {
+		if (_btn_b_l != "" && M5.BtnB.pressedFor(ez.theme->longpress_time) ) {
 			keystr = ez.leftOf(_btn_b_l, "|", true);
 			_key_release_wait = true;
 		}
-		if (_btn_b_s != "" && m5.BtnB.wasReleased() ) {
+		if (_btn_b_s != "" && M5.BtnB.wasReleased() ) {
 			keystr = ez.leftOf(_btn_b_s, "|", true);
 		}
 
-		if (_btn_c_l != "" && m5.BtnC.pressedFor(ez.theme->longpress_time) ) {
+		if (_btn_c_l != "" && M5.BtnC.pressedFor(ez.theme->longpress_time) ) {
 			keystr = ez.leftOf(_btn_c_l, "|", true);
 			_key_release_wait = true;
 		}
-		if (_btn_c_s != "" && m5.BtnC.wasReleased() ) {
+		if (_btn_c_s != "" && M5.BtnC.wasReleased() ) {
 			keystr = ez.leftOf(_btn_c_s, "|", true);
 		}
 	}
 
-	if (m5.BtnA.isReleased() && m5.BtnB.isReleased() && m5.BtnC.isReleased() ) {
+	if (M5.BtnA.isReleased() && M5.BtnB.isReleased() && M5.BtnC.isReleased() ) {
 		_key_release_wait = false;
 	}
 
@@ -796,7 +796,7 @@ long  M5ez::_text_cursor_millis;
 bool M5ez::_begun = false;
 
 void M5ez::begin() {
-	m5.begin();
+	M5.begin();
 	ezTheme::begin();
 	ez.screen.begin();
 	ez.settings.begin();
@@ -883,14 +883,14 @@ String M5ez::msgBox(String header, String msg, String buttons /* = "OK" */, cons
 	ez.buttons.show(buttons);
 	std::vector<line_t> lines;
 	msg.replace("|", (String)char(13));
-	m5.lcd.setTextDatum(CC_DATUM);
-	m5.lcd.setTextColor(color);
+	M5.Lcd.setTextDatum(CC_DATUM);
+	M5.Lcd.setTextColor(color);
 	ez.setFont(font);
 	_fitLines(msg, ez.canvas.width() - 2 * ez.theme->msg_hmargin, ez.canvas.width() / 3, lines);
 	int16_t font_h = ez.fontHeight();
 	for (int8_t n = 0; n < lines.size(); n++) {
 		int16_t y = ez.canvas.top() + ez.canvas.height() / 2 - ( (lines.size() - 1) * font_h / 2) + n * font_h;
-		m5.lcd.drawString(lines[n].line, TFT_W / 2, y);
+		M5.Lcd.drawString(lines[n].line, TFT_W / 2, y);
 	}
 	if (buttons != "" && blocking) {
 		String ret = ez.buttons.wait();
@@ -967,12 +967,12 @@ String M5ez::textInput(String header /* = "" */, String defaultText /* = "" */) 
 }
 
 void M5ez::_drawTextInputLockString(String text) {
-	m5.lcd.setTextColor(TFT_RED);
+	M5.Lcd.setTextColor(TFT_RED);
 	ez.setFont(ez.theme->input_keylock_font);
-	m5.lcd.setTextDatum(TR_DATUM);
+	M5.Lcd.setTextDatum(TR_DATUM);
 	int16_t text_h = ez.fontHeight();
-	m5.lcd.fillRect(0, _text_cursor_y + ez.theme->input_vmargin + 10 + text_h, TFT_W, text_h, ez.screen.background());
-	m5.lcd.drawString(text, TFT_W - ez.theme->input_hmargin - 10, _text_cursor_y + ez.theme->input_vmargin + text_h + 10);
+	M5.Lcd.fillRect(0, _text_cursor_y + ez.theme->input_vmargin + 10 + text_h, TFT_W, text_h, ez.screen.background());
+	M5.Lcd.drawString(text, TFT_W - ez.theme->input_hmargin - 10, _text_cursor_y + ez.theme->input_vmargin + text_h + 10);
 }
 
 void M5ez::_drawTextInputBox(String text) {
@@ -982,14 +982,14 @@ void M5ez::_drawTextInputBox(String text) {
 	int16_t text_h = ez.fontHeight();
 	_text_cursor_y = ez.canvas.top() + ez.theme->input_top + ez.theme->input_vmargin;
 	_text_cursor_h = text_h;
-	_text_cursor_w = m5.lcd.textWidth("A");
-	m5.lcd.fillRoundRect(ez.theme->input_hmargin, ez.canvas.top() + ez.theme->input_top, box_w, text_h + ez.theme->input_vmargin * 2, 8, ez.theme->input_bgcolor);
+	_text_cursor_w = M5.Lcd.textWidth("A");
+	M5.Lcd.fillRoundRect(ez.theme->input_hmargin, ez.canvas.top() + ez.theme->input_top, box_w, text_h + ez.theme->input_vmargin * 2, 8, ez.theme->input_bgcolor);
 	_text_cursor_y = ez.canvas.top() + ez.theme->input_top + ez.theme->input_vmargin;
-	m5.lcd.setTextColor(ez.theme->input_fgcolor);
+	M5.Lcd.setTextColor(ez.theme->input_fgcolor);
 	String disp_text = text;
 	// chop off characters from the beginning of displayed string until it fits
 	while (true) {
-		text_w = M5.lcd.textWidth(disp_text);
+		text_w = M5.Lcd.textWidth(disp_text);
 		if (text_w + _text_cursor_w > box_w) {
 			disp_text = disp_text.substring(1);
 		} else {
@@ -1000,8 +1000,8 @@ void M5ez::_drawTextInputBox(String text) {
 	// For some reason the text rendering prints a monospace font with a space at the end with a very narrow space
 	if (disp_text.substring(disp_text.length() - 1) == " ") disp_text += "  ";
 
-	m5.lcd.setTextDatum(TC_DATUM);
-	m5.lcd.drawString(disp_text, TFT_W / 2 - _text_cursor_w / 2, ez.canvas.top() + ez.theme->input_top + ez.theme->input_vmargin);
+	M5.Lcd.setTextDatum(TC_DATUM);
+	M5.Lcd.drawString(disp_text, TFT_W / 2 - _text_cursor_w / 2, ez.canvas.top() + ez.theme->input_top + ez.theme->input_vmargin);
 	_text_cursor_x = TFT_W / 2 + text_w / 2 - _text_cursor_w / 2 + 2;
 	_textCursor (true);	// draw the  cursor block
 }
@@ -1015,8 +1015,8 @@ void M5ez::_textCursor() {
 }
 
 void M5ez::_textCursor(bool state) {
-	if (state) M5.lcd.fillRect(_text_cursor_x, _text_cursor_y, _text_cursor_w, _text_cursor_h, ez.theme->input_fgcolor);
-	if (!state) M5.lcd.fillRect(_text_cursor_x, _text_cursor_y, _text_cursor_w, _text_cursor_h, ez.theme->input_bgcolor);
+	if (state) M5.Lcd.fillRect(_text_cursor_x, _text_cursor_y, _text_cursor_w, _text_cursor_h, ez.theme->input_fgcolor);
+	if (!state) M5.Lcd.fillRect(_text_cursor_x, _text_cursor_y, _text_cursor_w, _text_cursor_h, ez.theme->input_bgcolor);
 	_text_cursor_state = state;
 	_text_cursor_millis = millis();
 }
@@ -1047,13 +1047,13 @@ String M5ez::textBox(String header /*= ""*/, String text /*= "" */, bool readonl
 	uint16_t offset = 0;
 	bool redraw = true;
 	ez.setFont(font);
-	uint8_t cursor_width = m5.lcd.textWidth("|");
+	uint8_t cursor_width = M5.Lcd.textWidth("|");
 	uint8_t cursor_height = per_line_h * 0.8;
 	int16_t cursor_x = 0;
 	int16_t cursor_y = 0;
 	while (true) {
 		if (redraw) {
-			if (!readonly && cursor_x && cursor_y) m5.lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, ez.screen.background());		//Remove current cursor
+			if (!readonly && cursor_x && cursor_y) M5.Lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, ez.screen.background());		//Remove current cursor
 			cursor_x = cursor_y = 0;
 			tmp_buttons = buttons;
 			if (offset >= lines.size() - lines_per_screen) {
@@ -1065,8 +1065,8 @@ String M5ez::textBox(String header /*= ""*/, String text /*= "" */, bool readonl
 			}
 			ez.buttons.show(tmp_buttons);
 			ez.setFont(font);
-			m5.lcd.setTextColor(color, ez.screen.background());
-			m5.lcd.setTextDatum(TL_DATUM);
+			M5.Lcd.setTextColor(color, ez.screen.background());
+			M5.Lcd.setTextDatum(TL_DATUM);
 			uint16_t x, y;
 			int16_t sol, eol;
 			String this_line;
@@ -1088,15 +1088,15 @@ String M5ez::textBox(String header /*= ""*/, String text /*= "" */, bool readonl
 					y = ez.canvas.top() + remainder * 0.7 + (n - offset) * per_line_h;
 					x = ez.theme->tb_hmargin;
 					if (!readonly && sol != -1 && cursor_pos >= sol && cursor_pos <= eol && n < lines.size()) { 		// if cursor is on current line
-						x += m5.lcd.drawString(this_line.substring(0, cursor_pos - sol), x, y);
+						x += M5.Lcd.drawString(this_line.substring(0, cursor_pos - sol), x, y);
 						cursor_x = x;
 						cursor_y = y;
 						x += cursor_width;
-						x += m5.lcd.drawString(this_line.substring(cursor_pos - sol), x, y);
+						x += M5.Lcd.drawString(this_line.substring(cursor_pos - sol), x, y);
 					} else {
-						x += m5.lcd.drawString(this_line, x, y);
+						x += M5.Lcd.drawString(this_line, x, y);
 					}
-					m5.lcd.fillRect(x, y, ez.canvas.width() - x, per_line_h, ez.screen.background());
+					M5.Lcd.fillRect(x, y, ez.canvas.width() - x, per_line_h, ez.screen.background());
 				}
 				redraw = false;
 			}
@@ -1104,10 +1104,10 @@ String M5ez::textBox(String header /*= ""*/, String text /*= "" */, bool readonl
 		if (!readonly && cursor_x && cursor_y && millis() - cursor_time > ez.theme->input_cursor_blink) {
 			cursor_time = millis();
 			if (cursor_state) {
-				m5.lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, ez.screen.background());
+				M5.Lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, ez.screen.background());
 				cursor_state = false;
 			} else {
-				m5.lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, color);
+				M5.Lcd.fillRect(cursor_x, cursor_y, cursor_width, cursor_height, color);
 				cursor_state = true;
 			}
 		}
@@ -1215,8 +1215,8 @@ void M5ez::_wrapLines(String text, uint16_t width, std::vector<line_t>& lines) {
 		}
 		newline = text.indexOf(char(nlchar), last_space + 1);
 		if (newline != -1 && newline < cur_space) cur_space = newline;
-		if (m5.lcd.textWidth(text.substring(offset, cur_space)) > width || text.substring(last_space, last_space + 1) == (String)char(nlchar)) {
-			if (m5.lcd.textWidth(text.substring(offset, last_space)) <= width) {
+		if (M5.Lcd.textWidth(text.substring(offset, cur_space)) > width || text.substring(last_space, last_space + 1) == (String)char(nlchar)) {
+			if (M5.Lcd.textWidth(text.substring(offset, last_space)) <= width) {
 				new_line.position = offset;
 				new_line.line = text.substring(offset, last_space);
 				lines.push_back(new_line);
@@ -1224,7 +1224,7 @@ void M5ez::_wrapLines(String text, uint16_t width, std::vector<line_t>& lines) {
 				last_space = cur_space;
 			} else {
 				for (uint16_t n = offset; n < text.length(); n++) {
-					if (m5.lcd.textWidth(text.substring(offset, n + 1)) > width) {
+					if (M5.Lcd.textWidth(text.substring(offset, n + 1)) > width) {
 						new_line.position = offset;
 						new_line.line = text.substring(offset, n);
 						lines.push_back(new_line);
@@ -1315,7 +1315,7 @@ int16_t M5ez::chopString(String input, String separator, std::vector<String>& ch
 int16_t M5ez::charsFit(String input, int16_t cutoff) {
 	int16_t measured;
 	for (int16_t n = input.length(); n >= 0; n--) {
-		measured = m5.lcd.textWidth(input.substring(0, n));
+		measured = M5.Lcd.textWidth(input.substring(0, n));
 		if (measured <= cutoff) {
 			return n;
 		}
@@ -1324,13 +1324,13 @@ int16_t M5ez::charsFit(String input, int16_t cutoff) {
 }
 
 String M5ez::clipString(String input, int16_t cutoff, bool dots /* = true */ ) {
-	if (m5.lcd.textWidth(input) <= cutoff) {
+	if (M5.Lcd.textWidth(input) <= cutoff) {
 		return input;
 	} else {
 		for (int16_t n = input.length(); n >= 0; n--) {
 			String toMeasure = input.substring(0, n);
 			if (dots) toMeasure = toMeasure + "..";
-			if (m5.lcd.textWidth(toMeasure) <= cutoff) return toMeasure;
+			if (M5.Lcd.textWidth(toMeasure) <= cutoff) return toMeasure;
 		}
 		return "";
 	}
@@ -1341,7 +1341,7 @@ bool M5ez::isBackExitOrDone(String str) {
 	return false;
 }
 
-// Font related m5.lcd wrappers
+// Font related M5.Lcd wrappers
 
 void M5ez::setFont(const GFXfont* font) {
 	long ptrAsInt = (long) font;
@@ -1351,14 +1351,14 @@ void M5ez::setFont(const GFXfont* font) {
 			ptrAsInt -= 8;
 			size++;
 		}
-		m5.lcd.setTextFont(ptrAsInt);
+		M5.Lcd.setTextFont(ptrAsInt);
 	} else {
-		m5.lcd.setFreeFont(font);
+		M5.Lcd.setFreeFont(font);
 	}
-	m5.lcd.setTextSize(size);
+	M5.Lcd.setTextSize(size);
 }
 
-int16_t M5ez::fontHeight() { return m5.lcd.fontHeight(m5.lcd.textfont); }
+int16_t M5ez::fontHeight() { return M5.Lcd.fontHeight(M5.Lcd.getFont()); }
 
 String M5ez::version() { return M5EZ_VERSION; }
 
@@ -1646,20 +1646,20 @@ void ezMenu::_drawItem(int16_t n, String text, bool selected) {
 	uint16_t fill_color;
 	ez.setFont(_font);
 	int16_t top_item_h = ez.canvas.top() + (ez.canvas.height() % _per_item_h) / 2;   // remainder of screen left over by last item not fitting split to center menu
-	m5.lcd.setTextDatum(CL_DATUM);
+	M5.Lcd.setTextDatum(CL_DATUM);
 	if (selected) {
 		fill_color = ez.theme->menu_sel_bgcolor;
-		m5.lcd.setTextColor(ez.theme->menu_sel_fgcolor);
+		M5.Lcd.setTextColor(ez.theme->menu_sel_fgcolor);
 	} else {
 		fill_color = ez.screen.background();
-		m5.lcd.setTextColor(ez.theme->menu_item_color);
+		M5.Lcd.setTextColor(ez.theme->menu_item_color);
 	}
 	text = ez.clipString(text, TFT_W - ez.theme->menu_lmargin - 2 * ez.theme->menu_item_hmargin - ez.theme->menu_rmargin);
-	m5.lcd.fillRoundRect(ez.theme->menu_lmargin, top_item_h + n * _per_item_h, TFT_W - ez.theme->menu_lmargin - ez.theme->menu_rmargin, _per_item_h, ez.theme->menu_item_radius, fill_color);
-	m5.lcd.drawString(ez.leftOf(text, "\t"), ez.theme->menu_lmargin + ez.theme->menu_item_hmargin, top_item_h + _per_item_h / 2 + n * _per_item_h - 2);
+	M5.Lcd.fillRoundRect(ez.theme->menu_lmargin, top_item_h + n * _per_item_h, TFT_W - ez.theme->menu_lmargin - ez.theme->menu_rmargin, _per_item_h, ez.theme->menu_item_radius, fill_color);
+	M5.Lcd.drawString(ez.leftOf(text, "\t"), ez.theme->menu_lmargin + ez.theme->menu_item_hmargin, top_item_h + _per_item_h / 2 + n * _per_item_h - 2);
 	if (text.indexOf("\t") != -1) {
-		m5.lcd.setTextDatum(CR_DATUM);
-		m5.lcd.drawString(ez.rightOf(text, "\t"),  TFT_W - ez.theme->menu_rmargin - ez.theme->menu_item_hmargin, top_item_h + _per_item_h / 2 + n * _per_item_h - 2);
+		M5.Lcd.setTextDatum(CR_DATUM);
+		M5.Lcd.drawString(ez.rightOf(text, "\t"),  TFT_W - ez.theme->menu_rmargin - ez.theme->menu_item_hmargin, top_item_h + _per_item_h / 2 + n * _per_item_h - 2);
 	}
 }
 
@@ -1746,10 +1746,11 @@ int16_t ezMenu::_runImagesOnce() {
 
 void ezMenu::_drawImage(MenuItem_t &item) {
 	if (item.image) {
-		m5.lcd.drawJpg((uint8_t *)item.image, (sizeof(item.image) / sizeof(item.image[0])), 0, ez.canvas.top() + _img_from_top, TFT_W, ez.canvas.height() - _img_from_top);
+		// M5.Lcd.drawJpg((uint8_t *)item.image, (sizeof(item.image) / sizeof(item.image[0])), 0, ez.canvas.top() + _img_from_top, TFT_W, ez.canvas.height() - _img_from_top);
+		M5.Lcd.pushImage(0, ez.canvas.top() + _img_from_top, TFT_W, ez.canvas.height() - _img_from_top, (uint16_t *)item.image );
 	}
 	if (item.fs) {
-		m5.lcd.drawJpgFile(*(item.fs), item.path.c_str(), 0, ez.canvas.top() + _img_from_top, TFT_W, ez.canvas.height() - _img_from_top);
+		// M5.Lcd.drawJpgFile(*(item.fs), item.path.c_str(), 0, ez.canvas.top() + _img_from_top, TFT_W, ez.canvas.height() - _img_from_top);
 	}
 }
 
@@ -1758,8 +1759,8 @@ void ezMenu::_drawCaption() {
 	String caption = ez.rightOf(_items[_selected].nameAndCaption, "|");
 	if (_img_caption_font == NULL || caption == "") return;
 	ez.setFont(_img_caption_font);
-	m5.lcd.setTextColor(_img_caption_color);
-	m5.lcd.setTextDatum(_img_caption_location);
+	M5.Lcd.setTextColor(_img_caption_color);
+	M5.Lcd.setTextDatum(_img_caption_location);
 	// Set X and Y for printing caption seperately, less code duplication
 	switch(_img_caption_location) {
 		case TL_DATUM:
@@ -1800,7 +1801,7 @@ void ezMenu::_drawCaption() {
 			break;
 		//
 	}
-	m5.lcd.drawString(caption, x, y);
+	M5.Lcd.drawString(caption, x, y);
 }
 
 void ezMenu::_fixOffset() {
@@ -1840,7 +1841,7 @@ void ezMenu::_Arrows() {
 		fill_color = ez.screen.background();
 	}
 	static uint8_t l = ez.theme->menu_arrows_lmargin;
-	m5.lcd.fillTriangle(l, top + 25, l + 10, top + 25, l + 5, top + 10, fill_color);
+	M5.Lcd.fillTriangle(l, top + 25, l + 10, top + 25, l + 5, top + 10, fill_color);
 
 	// Down arrow
 	if (_items.size() > _offset + _items_per_screen) {
@@ -1848,7 +1849,7 @@ void ezMenu::_Arrows() {
 	} else {
 		fill_color = ez.screen.background();
 	}
-	m5.lcd.fillTriangle(l, top + height - 25, l + 10, top + height - 25, l + 5, top + height - 10, fill_color);
+	M5.Lcd.fillTriangle(l, top + height - 25, l + 10, top + height - 25, l + 5, top + height - 10, fill_color);
 }
 
 bool ezMenu::_sortWrapper(MenuItem_t& item1, MenuItem_t& item2) {
@@ -1905,19 +1906,19 @@ ezProgressBar::ezProgressBar(String header /* = "" */, String msg /* = "" */, St
 	ez.buttons.show(buttons);
 	std::vector<line_t> lines;
 	msg.replace("|", (String)char(13));
-	m5.lcd.setTextDatum(CC_DATUM);
-	m5.lcd.setTextColor(color);
+	M5.Lcd.setTextDatum(CC_DATUM);
+	M5.Lcd.setTextColor(color);
 	ez.setFont(font);
 	ez._fitLines(msg, ez.canvas.width() - 2 * ez.theme->msg_hmargin, ez.canvas.width() / 3, lines);
 	uint8_t font_h = ez.fontHeight();
 	uint8_t num_lines = lines.size() + 2;
 	for (uint8_t n = 0; n < lines.size(); n++) {
 		int16_t y = ez.canvas.top() + ez.canvas.height() / 2 - ( (num_lines - 1) * font_h / 2) + n * font_h;
-		m5.lcd.drawString(lines[n].line, TFT_W / 2, y);
+		M5.Lcd.drawString(lines[n].line, TFT_W / 2, y);
 	}
 	_bar_y = ez.canvas.top() + ez.canvas.height() / 2 + ( (num_lines - 1) * font_h / 2) - ez.theme->progressbar_width / 2;
 	for (uint8_t n = 0; n < ez.theme->progressbar_line_width; n++) {
-		m5.lcd.drawRect(ez.canvas.left() + ez.theme->msg_hmargin + n, _bar_y + n, ez.canvas.width() - 2 * ez.theme->msg_hmargin - 2 * n, ez.theme->progressbar_width - 2 * n, bar_color);
+		M5.Lcd.drawRect(ez.canvas.left() + ez.theme->msg_hmargin + n, _bar_y + n, ez.canvas.width() - 2 * ez.theme->msg_hmargin - 2 * n, ez.theme->progressbar_width - 2 * n, bar_color);
 	}
 }
 
@@ -1930,14 +1931,14 @@ void ezProgressBar::value(float val) {
 
 	uint16_t left = ez.canvas.left() + ez.theme->msg_hmargin + ez.theme->progressbar_line_width;
 	uint16_t width = (int16_t)(ez.canvas.width() - 2 * ez.theme->msg_hmargin - 2 * ez.theme->progressbar_line_width);
-	m5.lcd.fillRect(left, _bar_y + ez.theme->progressbar_line_width, width * val / 100, ez.theme->progressbar_width - 2 * ez.theme->progressbar_line_width, _bar_color);
-	m5.lcd.fillRect(left + (width * val / 100), _bar_y + ez.theme->progressbar_line_width, width - (width * val / 100), ez.theme->progressbar_width - 2 * ez.theme->progressbar_line_width, ez.screen.background());
+	M5.Lcd.fillRect(left, _bar_y + ez.theme->progressbar_line_width, width * val / 100, ez.theme->progressbar_width - 2 * ez.theme->progressbar_line_width, _bar_color);
+	M5.Lcd.fillRect(left + (width * val / 100), _bar_y + ez.theme->progressbar_line_width, width - (width * val / 100), ez.theme->progressbar_width - 2 * ez.theme->progressbar_line_width, ez.screen.background());
 
 	if (_show_val == true) {
-		m5.lcd.setTextDatum(CC_DATUM);
-		m5.lcd.setTextColor(_val_color);
+		M5.Lcd.setTextDatum(CC_DATUM);
+		M5.Lcd.setTextColor(_val_color);
 		ez.setFont(ez.theme->msg_font);
-		m5.lcd.drawFloat(val, 0, TFT_W / 2, _bar_y + ez.theme->progressbar_width / 2 - 1);
+		M5.Lcd.drawFloat(val, 0, TFT_W / 2, _bar_y + ez.theme->progressbar_width / 2 - 1);
 	}
 }
 

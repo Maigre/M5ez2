@@ -5,30 +5,16 @@
 
 #include <vector>			// std::vector
 
-#define _M5STX_CORE_
-#define UKRAINIAN
+#define TFT_SLPIN           0x10
+#define TFT_SLPOUT          0x11
+#define TFT_DISPOFF         0x28
+#define TFT_DISPON          0x29
 
-#if defined (_M5STX_CORE_)
-	#include <M5StX.h>
-#else
-	#define TFT_SLPIN           0x10
-	#define TFT_SLPOUT          0x11
-	#define TFT_DISPOFF         0x28
-	#define TFT_DISPON          0x29
+#include <Arduino.h>
+#include <M5Unified.h>
+#include <FS.h>
 
-	#if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE) || defined (ARDUINO_LOLIN_D32_PRO) //TTGO T4 v1.3
-		#include <M5Stack.h>
-	#elif defined ( ARDUINO_M5Stick_C )	//Tested on M5StickC Plus
-	// 	#include <M5StickC.h>
-	// #elif defined (ARDUINO_M5Stick_C_Plus) //setRotation() does not work with CC
-		#include "M5StickCPlus.h"
-	#elif defined (ARDUINO_M5STACK_Core2)
-		#include <M5Core2.h>
-	#elif defined (ARDUINO_ESP32_DEV)
-		#include <M5Stack.h>
-	#endif
-#endif
-
+	
 #if defined (ARDUINO_M5Stack_Core_ESP32) || defined (ARDUINO_M5STACK_FIRE)
 	#define TFT_W		320
 	#define TFT_H		240
@@ -584,7 +570,7 @@ class M5ez {
 		static String clipString(String input, int16_t cutoff, bool dots = true);
 		static bool isBackExitOrDone(String str);
 
-		// m5.lcd wrappers that make fonts easier
+		// M5.Lcd wrappers that make fonts easier
 		static void setFont(const GFXfont* font);
 		static int16_t fontHeight();
 

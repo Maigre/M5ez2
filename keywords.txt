@@ -53,7 +53,7 @@ textBox	KEYWORD2
 faces	KEYWORD3
 on	KEYWORD2
 
-# m5.lcd wrappers that make fonts easier
+# M5.Lcd wrappers that make fonts easier
 setFont	KEYWORD2
 fontHeight	KEYWORD2
 	

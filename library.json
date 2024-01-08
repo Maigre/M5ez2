@@ -1,5 +1,5 @@
 {
-  "name": "M5ez",
+  "name": "M5ez2",
   "description": "Complete interface builder for the M5Stack, an ESP32 based mini tinker-computer",
   "keywords": "m5ez, m5stack, esp32",
   "authors": {
@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/M5ez/M5ez"
+    "url": "https://github.com/Maigre/M5ez2"
   },
   "dependencies": [
-    { "name": "M5Stack" },
+    { "name": "M5Unified" },
     { "name": "ezTime" }
   ],
   "version": "2.3.0",

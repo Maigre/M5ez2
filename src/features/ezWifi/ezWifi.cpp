@@ -53,13 +53,13 @@ void ezWifi::begin() {
 	ez.header.insert(ez.header.position("battery"), "wifi", sizeof(cutoffs) * (ez.theme->signal_bar_width + ez.theme->signal_bar_gap) + 2 * ez.theme->header_hmargin, _drawWidget);
 	// For handling issue #50, when initial connection attempt fails in this specific mode but will succeed if tried again.
 	WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info){
-		if(WIFI_REASON_ASSOC_FAIL == info.disconnected.reason) {
+		if(WIFI_REASON_ASSOC_FAIL == info.wifi_sta_disconnected.reason) {
 		#ifdef M5EZ_WIFI_DEBUG
 			Serial.println("EZWIFI: Special case: Disconnect w/ ASSOC_FAIL. Setting _state to EZWIFI_SCANNING;");
 		#endif
 		_state = EZWIFI_SCANNING;
 	}
-	}, WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+	}, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 	ez.addEvent(loop);
 }
 
@@ -80,7 +80,7 @@ void ezWifi::_drawWidget(uint16_t x, uint16_t w) {
 	uint8_t this_len;
 	for (uint8_t n = 0; n < max_bars; n++) {
 		this_len = ((float) (n + 1) / max_bars) * max_len;
-		m5.lcd.fillRect(left_offset + n * (ez.theme->signal_bar_width + ez.theme->signal_bar_gap), top + max_len - this_len, ez.theme->signal_bar_width, this_len, (n + 1 <= bars ? ez.theme->header_fgcolor : ez.theme->header_bgcolor) );
+		M5.Lcd.fillRect(left_offset + n * (ez.theme->signal_bar_width + ez.theme->signal_bar_gap), top + max_len - this_len, ez.theme->signal_bar_width, this_len, (n + 1 <= bars ? ez.theme->header_fgcolor : ez.theme->header_bgcolor) );
 	}
 }
 

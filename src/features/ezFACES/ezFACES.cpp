@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include <Preferences.h>
 #include "../../M5ez.h"
 #include "ezFACES.h"
